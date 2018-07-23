@@ -102,9 +102,7 @@ namespace IDChecker
 
         private int GetLineNumber(string s)
         {
-            //string replaced = Regex.Unescape(s);
             string[] lines = System.IO.File.ReadAllLines(filePath);
-
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -125,7 +123,7 @@ namespace IDChecker
             return -1;
         }
 
-        public string RemoveSpecialCharacters(string str)
+        private string RemoveSpecialCharacters(string str)
         {
             return Regex.Replace(str, @"[^\w\d\s]", "");
         }
