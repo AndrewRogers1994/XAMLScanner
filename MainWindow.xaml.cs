@@ -63,11 +63,39 @@ namespace IDChecker
 
             foreach (XmlNode node in nodes)
             {
+                /*
                 if(mustContainXName && !node.OuterXml.Contains("x:Name") || mustContainName && !node.OuterXml.Contains("Name"))
                 {
                     elements.Add(node);
                 }
+                */
+
+                if(MatchesControlName(node.Name))
+                { 
+
+                bool foundName = false;
+                bool foundxName = false;
+                for (int i = 0; i < node.Attributes.Count; i++)
+                {
+                    if (node.Attributes[i].Name.Contains("Name"))
+                    {
+                        foundName = true;
+                    }
+
+                    if (node.Attributes[i].Name.Contains("x:Name"))
+                    {
+                        foundxName = true;
+                    }
+                }
+
+                if (mustContainXName && !foundxName || mustContainName && !foundName)
+                {
+                    elements.Add(node);
+                }
+                }
+
                 GetChildElements(node);
+
             }
         }
 
@@ -77,7 +105,29 @@ namespace IDChecker
             {
                 if (MatchesControlName(childnode.Name))
                 {
+
+                    /*
                     if (mustContainXName && !childnode.OuterXml.Contains("x:Name") || mustContainName && !childnode.OuterXml.Contains("Name"))
+                    {
+                        elements.Add(childnode);
+                    }
+                    */
+                    bool foundName = false;
+                    bool foundxName = false;
+                    for (int i = 0; i < childnode.Attributes.Count; i++)
+                    {
+                        if(childnode.Attributes[i].Name.Contains("Name"))
+                        {
+                            foundName = true;
+                        }
+
+                        if (childnode.Attributes[i].Name.Contains("x:Name"))
+                        {
+                            foundxName = true;
+                        }
+                    }
+
+                    if (mustContainXName && !foundxName || mustContainName && !foundName)
                     {
                         elements.Add(childnode);
                     }
