@@ -31,7 +31,6 @@ namespace IDChecker
         {
             mustContainName = (mcncb.IsChecked.HasValue && mcncb.IsChecked.Value == true);
             mustContainXName = (mcxncb.IsChecked.HasValue && mcxncb.IsChecked.Value == true);
-
             missingItems.ItemsSource = null;
             GetXaml();
 
@@ -39,8 +38,8 @@ namespace IDChecker
             {
                 _missingIDs.Add(new MissingID(elements[i].Name, GetLineNumber(elements[i].OuterXml), elements[i].OuterXml));
             }
-            missingItems.ItemsSource = _missingIDs;
 
+            missingItems.ItemsSource = _missingIDs;
             itemCount.Content = "Count: " + _missingIDs.Count;
 
             if (_missingIDs.Count == 0)
@@ -54,48 +53,37 @@ namespace IDChecker
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(filePath);
-
             AddElements(doc.ChildNodes);
         }
 
         private void AddElements(XmlNodeList nodes)
         {
-
             foreach (XmlNode node in nodes)
             {
-                /*
-                if(mustContainXName && !node.OuterXml.Contains("x:Name") || mustContainName && !node.OuterXml.Contains("Name"))
+                if (MatchesControlName(node.Name))
                 {
-                    elements.Add(node);
-                }
-                */
 
-                if(MatchesControlName(node.Name))
-                { 
-
-                bool foundName = false;
-                bool foundxName = false;
-                for (int i = 0; i < node.Attributes.Count; i++)
-                {
-                    if (node.Attributes[i].Name.Contains("Name"))
+                    bool foundName = false;
+                    bool foundxName = false;
+                    for (int i = 0; i < node.Attributes.Count; i++)
                     {
-                        foundName = true;
+                        if (node.Attributes[i].Name.Contains("Name"))
+                        {
+                            foundName = true;
+                        }
+
+                        if (node.Attributes[i].Name.Contains("x:Name"))
+                        {
+                            foundxName = true;
+                        }
                     }
 
-                    if (node.Attributes[i].Name.Contains("x:Name"))
+                    if (mustContainXName && !foundxName || mustContainName && !foundName)
                     {
-                        foundxName = true;
+                        elements.Add(node);
                     }
                 }
-
-                if (mustContainXName && !foundxName || mustContainName && !foundName)
-                {
-                    elements.Add(node);
-                }
-                }
-
                 GetChildElements(node);
-
             }
         }
 
@@ -105,18 +93,11 @@ namespace IDChecker
             {
                 if (MatchesControlName(childnode.Name))
                 {
-
-                    /*
-                    if (mustContainXName && !childnode.OuterXml.Contains("x:Name") || mustContainName && !childnode.OuterXml.Contains("Name"))
-                    {
-                        elements.Add(childnode);
-                    }
-                    */
                     bool foundName = false;
                     bool foundxName = false;
                     for (int i = 0; i < childnode.Attributes.Count; i++)
                     {
-                        if(childnode.Attributes[i].Name.Contains("Name"))
+                        if (childnode.Attributes[i].Name.Contains("Name"))
                         {
                             foundName = true;
                         }
@@ -146,7 +127,6 @@ namespace IDChecker
                     return true;
                 }
             }
-
             return false;
         }
 
@@ -156,7 +136,6 @@ namespace IDChecker
 
             for (int i = 0; i < lines.Length; i++)
             {
-
                 string trimmed = lines[i].Trim();
                 string trimmedmatch = s.Trim();
                 string halfmatch = trimmedmatch.Substring(0, (trimmedmatch.Length / 2));
@@ -168,7 +147,6 @@ namespace IDChecker
                 {
                     return i;
                 }
-
             }
             return -1;
         }
